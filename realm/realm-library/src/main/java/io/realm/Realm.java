@@ -299,7 +299,7 @@ public final class Realm extends BaseRealm {
             realm.schema.columnIndices = new ColumnIndices(columnInfoMap);
         } finally {
             if (commitNeeded) {
-                realm.commitTransaction();
+                realm.commitTransaction(false, null);
             } else {
                 realm.cancelTransaction();
             }
@@ -1104,7 +1104,7 @@ public final class Realm extends BaseRealm {
                     transaction.execute(bgRealm);
 
                     if (!Thread.currentThread().isInterrupted()) {
-                        bgRealm.commitTransaction(new Runnable() {
+                        bgRealm.commitTransaction(true, new Runnable() {
                             @Override
                             public void run() {
                                 // The bgRealm needs to be closed before post event to caller's handler to avoid
