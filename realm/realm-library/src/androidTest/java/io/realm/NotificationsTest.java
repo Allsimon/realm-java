@@ -977,4 +977,23 @@ public class NotificationsTest {
 
         TestHelper.exitOrThrow(executorService, signalTestFinished, signalClosedRealm, backgroundLooper, threadAssertionError);
     }
+
+    @Test
+    @RunTestInLooperThread
+    public void realmListenerAddedAfterCommit() {
+
+    }
+
+    @Test
+    @RunTestInLooperThread
+    public void realmResultsListenerAddedAfterCommit() {
+
+    }
+
+    @Test
+    @RunTestInLooperThread
+    public void realmObjectListenerAddedAfterCommit() {
+
+    }
+
 }

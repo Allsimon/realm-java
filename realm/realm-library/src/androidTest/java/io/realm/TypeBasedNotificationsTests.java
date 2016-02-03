@@ -826,10 +826,25 @@ public class TypeBasedNotificationsTests {
     @RunTestInLooperThread
     public void callback_with_relevant_commit_realmresults_async() {
         final Realm realm = looperThread.realm;
+
+        // Step 1
+        realm.beginTransaction();
+        final Dog akamaru = realm.createObject(Dog.class);
+        akamaru.setName("Akamaru");
+        realm.commitTransaction();
+
+        // Global listener will be called on all changes
         realm.addChangeListener(new RealmChangeListener() {
             @Override
             public void onChange() {
-                if (globalCommitInvocations.incrementAndGet() == 3) {
+                int commits = globalCommitInvocations.incrementAndGet();
+                if (commits == 2) {
+                    // Step 3
+                    realm.beginTransaction();
+                    akamaru.setAge(17);
+                    realm.commitTransaction();
+
+                } else if (commits == 3) {
                     realm.handler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -843,27 +858,24 @@ public class TypeBasedNotificationsTests {
 
         final RealmResults<Dog> dogs = realm.where(Dog.class).findAllAsync();
         assertTrue(dogs.load());
+
         dogs.addChangeListener(new RealmChangeListener() {
             @Override
             public void onChange() {
                 assertEquals(1, dogs.size());
                 assertEquals("Akamaru", dogs.get(0).getName());
-                typebasedCommitInvocations.incrementAndGet();
+
+                switch (typebasedCommitInvocations.incrementAndGet()) {
+                    case 1:
+                        // Step 2
+                        realm.beginTransaction();
+                        realm.commitTransaction();
+                    case 2:
+                        // Step 4a
+                        assertEquals(17, dogs.get(0).getAge());
+                }
             }
         });
-
-        realm.beginTransaction();
-        Dog akamaru = realm.createObject(Dog.class);
-        akamaru.setName("Akamaru");
-        realm.commitTransaction();
-
-        realm.beginTransaction();
-        realm.commitTransaction();
-
-        realm.beginTransaction();
-        akamaru.setAge(17);
-        realm.commitTransaction();
-
     }
 
     // ********************************************************************************* //
