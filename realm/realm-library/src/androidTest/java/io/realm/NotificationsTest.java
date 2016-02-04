@@ -981,19 +981,55 @@ public class NotificationsTest {
     @Test
     @RunTestInLooperThread
     public void realmListenerAddedAfterCommit() {
+        Realm realm = looperThread.realm;
+        realm.beginTransaction();
+        realm.commitTransaction();
 
+        realm.addChangeListener(new RealmChangeListener() {
+            @Override
+            public void onChange() {
+                looperThread.testComplete();
+            }
+        });
     }
 
     @Test
     @RunTestInLooperThread
     public void realmResultsListenerAddedAfterCommit() {
+        Realm realm = looperThread.realm;
+        RealmResults<AllTypes> results = realm.allObjects(AllTypes.class);
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.createObject(AllTypes.class);
+            }
+        });
 
+        results.addChangeListener(new RealmChangeListener() {
+            @Override
+            public void onChange() {
+                looperThread.testComplete();
+            }
+        });
     }
 
     @Test
     @RunTestInLooperThread
     public void realmObjectListenerAddedAfterCommit() {
+        Realm realm = looperThread.realm;
+        realm.beginTransaction();
+        AllTypes obj = realm.createObject(AllTypes.class);
+        realm.commitTransaction();
 
+        realm.beginTransaction();
+        obj.setColumnLong(42);
+        realm.commitTransaction();
+
+        obj.addChangeListener(new RealmChangeListener() {
+            @Override
+            public void onChange() {
+                looperThread.testComplete();
+            }
+        });
     }
-
 }
