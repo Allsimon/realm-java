@@ -106,6 +106,7 @@ public class HandlerController implements Handler.Callback {
                     break;
                 }
                 case COMPLETED_ASYNC_REALM_OBJECT: {
+                    notifyAllListeners();
                     QueryUpdateTask.Result result = (QueryUpdateTask.Result) message.obj;
                     completedAsyncRealmObject(result);
                     break;
