@@ -918,6 +918,7 @@ public class TypeBasedNotificationsTests {
         realm.commitTransaction();
 
         final RealmResults<Dog> dogs = realm.where(Dog.class).findAllAsync();
+        assertTrue(dogs.load());
         dogs.addChangeListener(new RealmChangeListener() {
             @Override
             public void onChange() {
