@@ -998,12 +998,9 @@ public class NotificationsTest {
     public void realmResultsListenerAddedAfterCommit() {
         Realm realm = looperThread.realm;
         RealmResults<AllTypes> results = realm.allObjects(AllTypes.class);
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                realm.createObject(AllTypes.class);
-            }
-        });
+        realm.beginTransaction();
+        realm.createObject(AllTypes.class);
+        realm.commitTransaction();
 
         results.addChangeListener(new RealmChangeListener() {
             @Override

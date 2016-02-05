@@ -309,8 +309,7 @@ abstract class BaseRealm implements Closeable {
      * timing conditions like the async transaction. In async transaction, the background Realm has to be closed before
      * other threads see the changes to majoyly avoid the flaky tests.
      *
-     * @param notifyLocalThread set to {@code false} to prevent this commit
-     *                          {@link HandlerController#REALM_CHANGED} notification to th
+     * @param notifyLocalThread set to {@code false} to prevent this commit from triggering thread local change listeners.
      * @param runAfterCommit runnable will run after transaction committed but before notification sent.
      */
     void commitTransaction(boolean notifyLocalThread, Runnable runAfterCommit) {
