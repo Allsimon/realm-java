@@ -682,7 +682,7 @@ public final class Realm extends BaseRealm {
      * @return the new object.
      * @throws RealmException if object could not be created.
      */
-    <E extends RealmObject> E createObject(Class<E> clazz, Object primaryKeyValue) {
+    public <E extends RealmObject> E createObject(Class<E> clazz, Object primaryKeyValue) {
         Table table = getTable(clazz);
         long rowIndex = table.addEmptyRowWithPrimaryKey(primaryKeyValue);
         return get(clazz, rowIndex);
